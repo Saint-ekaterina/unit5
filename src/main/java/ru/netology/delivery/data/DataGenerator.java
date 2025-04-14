@@ -48,21 +48,6 @@ public class DataGenerator {
         String city;
         String name;
         String phone;
-
-        public UserInfo(String s, String s1, String s2) {
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getPhone() {
-            return phone;
-        }
     }
 }
 
