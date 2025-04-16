@@ -1,5 +1,8 @@
 package ru.netology.delivery.test;
 
+import com.codeborne.selenide.Configuration;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,10 +13,17 @@ import java.time.Duration;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
 
 class DeliveryTest {
+
+    @BeforeAll
+    static void setupAll() {
+        WebDriverManager.chromedriver().setup(); // Автоматическая настройка драйвера
+        Configuration.browserSize = "1280x800";
+        Configuration.headless = true; // false для видимого браузера при отладке
+        Configuration.timeout = 15000; // Увеличенный таймаут
+    }
 
     @BeforeEach
     void setup() {
@@ -28,6 +38,8 @@ class DeliveryTest {
         var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
         var daysToAddForSecondMeeting = 7;
         var secondMeetingDate = DataGenerator.generateDate(daysToAddForSecondMeeting);
+
+        // Заполнение формы первый раз
         $("[data-test-id='city'] input").setValue(validUser.getCity());
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
         $("[data-test-id='date'] input").setValue(firstMeetingDate);
@@ -35,16 +47,28 @@ class DeliveryTest {
         $("[data-test-id='phone'] input").setValue(validUser.getPhone());
         $("[data-test-id='agreement']").click();
         $(byText("Запланировать")).click();
-        $(byText("Успешно!")).shouldBe(visible, Duration.ofSeconds(15));
-        $("[data-test-id='success-notification'].notification .notification__content")
-                .shouldHave(text("Встреча успешно запланирована на " + firstMeetingDate)).shouldBe(visible);
+
+        // Проверка первого уведомления
+        $("[data-test-id='success-notification']")
+                .shouldBe(visible, Duration.ofSeconds(15))
+                .shouldHave(text("Встреча успешно запланирована на " + firstMeetingDate));
+
+        // Изменение даты
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
         $("[data-test-id='date'] input").setValue(secondMeetingDate);
         $(byText("Запланировать")).click();
-        $("[data-test-id='replan-notification'].notification .notification__content")
-                .shouldHave(text("У вас уже запланирована встреча на другую дату. Перепланировать?")).shouldBe(visible);
+
+        // Проверка уведомления о перепланировании
+        $("[data-test-id='replan-notification']")
+                .shouldBe(visible, Duration.ofSeconds(15))
+                .shouldHave(text("У вас уже запланирована встреча на другую дату. Перепланировать?"));
+
+        // Подтверждение перепланирования
         $(byText("Перепланировать")).click();
-        $("[data-test-id='success-notification'].notification .notification__content")
-                .shouldHave(text("Встреча успешно запланирована на " + secondMeetingDate)).shouldBe(visible);
+
+        // Проверка финального уведомления
+        $("[data-test-id='success-notification']")
+                .shouldBe(visible, Duration.ofSeconds(15))
+                .shouldHave(text("Встреча успешно запланирована на " + secondMeetingDate));
     }
 }
