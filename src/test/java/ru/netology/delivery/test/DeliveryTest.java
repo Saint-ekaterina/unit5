@@ -1,7 +1,6 @@
 package ru.netology.delivery.test;
 
 import com.codeborne.selenide.Configuration;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,15 +13,14 @@ import java.time.Duration;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.open;
 
 class DeliveryTest {
 
     @BeforeAll
     static void setupAll() {
-        WebDriverManager.chromedriver().setup(); // Автоматическая настройка драйвера
         Configuration.browserSize = "1280x800";
-        Configuration.headless = true; // false для видимого браузера при отладке
-        Configuration.timeout = 15000; // Увеличенный таймаут
+        Configuration.timeout = 30000;
     }
 
     @BeforeEach
