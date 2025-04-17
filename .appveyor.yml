@@ -11,7 +11,7 @@ build: off
 install:
   - java -jar ./artifacts/app-replan-delivery.jar &
   - chmod +x gradlew
-  - choco install googlechrome --g 122.0.6261.128 -y
+  - choco install googlechrome --version 122.0.6261.128 -y
 
 
 build_script:
