@@ -11,6 +11,7 @@ build: off
 install:
   - java -jar ./artifacts/app-replan-delivery.jar &
   - chmod +x gradlew
+  - choco install googlechrome -y
 
 build_script:
   - ./gradlew test --info -Dselenide.headless=true
